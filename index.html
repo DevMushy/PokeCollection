@@ -220,7 +220,10 @@
     els.sets.innerHTML = '';
     state.filteredSets.forEach(s=>{
       const n = tpl.content.firstElementChild.cloneNode(true);
-      n.querySelector('.logo').src = s.images?.symbol || '';
+      const logoImg = n.querySelector('.logo');
+logoImg.src = s.images?.symbol || '';
+logoImg.loading = 'lazy';
+
       n.querySelector('.name').textContent = s.name;
       n.querySelector('.meta').textContent = `${s.series} • ${s.releaseDate}`;
       n.querySelector('.count').textContent = `${s.total||0} carte`;
@@ -305,7 +308,10 @@
     els.cards.innerHTML = '';
     state.filteredCards.forEach(card=>{
       const node = tpl.content.firstElementChild.cloneNode(true);
-      node.querySelector('.image').src = card.images?.small || '';
+const cardImg = node.querySelector('.image');
+cardImg.src = card.images?.small || '';
+cardImg.loading = 'lazy';
+
       node.querySelector('.name').textContent = card.name;
       node.querySelector('.meta').textContent = `#${card.number||'?'} • ${card.rarity||'—'}`;
       const price = priceFrom(card);
