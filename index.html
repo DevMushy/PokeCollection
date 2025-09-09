@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pokémon TCG – Collection & Price Tracker</title>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#111a2c; --muted:#8aa0c5; --text:#e8efff; --accent:#5dd0ff; --accent-2:#9b8cff; --good:#4ade80; --bad:#f87171;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,Helvetica,Arial,sans-serif;background:radial-gradient(1200px 800px at 80% -10%, #1a2540 0%, #0b1220 60%);color:var(--text)}
+    header{
+      position:sticky;top:0;z-index:10;background:linear-gradient(0deg,rgba(11,18,32,0.8),rgba(11,18,32,0.95));backdrop-filter:blur(8px);
+      border-bottom:1px solid #1c2a48
+    }
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
+    h1{margin:0;font-size:clamp(20px,2.6vw,28px);letter-spacing:.2px}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:10px}
+    input,select,button{background:#0f1627;border:1px solid #253455;color:var(--text);padding:10px 12px;border-radius:12px;outline:none}
+    input:focus,select:focus,button:focus{border-color:var(--accent)}
+    button{cursor:pointer}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+    .set-card, .card{background:var(--panel);border:1px solid #1c2a48;border-radius:16px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    .set-card:hover{border-color:var(--accent)}
+    .set-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .set-title{display:flex;align-items:center;gap:10px;font-weight:600}
+    .tag{font-size:12px;color:var(--muted);padding:3px 8px;border:1px solid #2a3c62;border-radius:999px}
+    .pill{font-size:11px;background:#101a2a;color:#b7c6e6;border:1px solid #2a3c62;padding:4px 8px;border-radius:999px}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    main{max-width:1200px;margin:0 auto;padding:18px}
+    .columns{display:grid;grid-template-columns:320px 1fr;gap:16px}
+    @media (max-width: 900px){.columns{grid-template-columns:1fr}}
+    .panel{background:var(--panel);border:1px solid #1c2a48;border-radius:16px;padding:14px}
+    .panel h2{margin:4px 0 10px 0;font-size:18px}
+    .search{width:260px}
+    .status{font-size:14px;color:var(--muted)}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .card{display:flex;gap:10px}
+    .card img{width:84px;height:116px;object-fit:cover;border-radius:10px;border:1px solid #22345a}
+    .card .info{flex:1;min-width:0}
+    .card .name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .card .meta{font-size:12px;color:var(--muted)}
+    .card .price{margin-top:6px;font-size:14px}
+    .card .actions{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+    .totals{display:flex;flex-wrap:wrap;gap:10px}
+    .total-pill{background:#0f1a2b;border:1px solid #27406d;border-radius:12px;padding:10px 12px}
+    .link{color:var(--accent)}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Pokémon TCG – Collection & Price Tracker</h1>
+      <div class="row toolbar">
+        <input id="apiKey" class="search" placeholder="Incolla qui la tua API Key di pokemontcg.io (opzionale)" />
+        <button id="saveKey">Salva Key</button>
+        <input id="setSearch" class="search" placeholder="Cerca set…" />
+        <select id="orderBy">
+          <option value="releaseDateDesc">Più recenti</option>
+          <option value="releaseDateAsc">Più vecchi</option>
+          <option value="nameAsc">Nome A→Z</option>
+          <option value="nameDesc">Nome Z→A</option>
+        </select>
+        <span class="status" id="status">Caricamento set…</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="columns">
+      <section class="panel">
+        <h2>Set</h2>
+        <div id="sets" class="grid"></div>
+      </section>
+
+      <section class="panel">
+        <h2 id="currentSetTitle">Carte</h2>
+        <div class="chips totals">
+          <div class="total-pill">Selezionate: <b id="selCount">0</b></div>
+          <div class="total-pill">Valore stimato: <b id="selTotal">€ 0.00</b></div>
+          <div class="total-pill">Carte nel set: <b id="setCount">0</b></div>
+        </div>
+        <div class="row" style="margin:10px 0; gap:8px;">
+          <input id="cardSearch" class="search" placeholder="Filtra carte per nome/numero…" />
+          <select id="priceSource">
+            <option value="cardmarket.trendPrice">Cardmarket: trend</option>
+            <option value="cardmarket.averageSellPrice">Cardmarket: avg sell</option>
+            <option value="tcgplayer.market">TCGplayer: market</option>
+          </select>
+          <button id="selectAll">Seleziona tutte</button>
+          <button id="clearAll">Deseleziona tutte</button>
+        </div>
+        <div id="cards" class="cards"></div>
+      </section>
+    </div>
+  </main>
+
+  <template id="setCardTpl">
+    <div class="set-card" role="button" tabindex="0">
+      <div class="set-head">
+        <div class="set-title">
+          <img class="logo" src="" alt="logo set" width="38" height="38" style="background:#0f1627;border-radius:10px;border:1px solid #22345a;padding:6px"/>
+          <div>
+            <div class="name"></div>
+            <div class="meta tag"></div>
+          </div>
+        </div>
+        <div class="pill count"></div>
+      </div>
+    </div>
+  </template>
+
+  <template id="cardTpl">
+    <div class="card">
+      <img class="image" alt="card" />
+      <div class="info">
+        <div class="name"></div>
+        <div class="meta"></div>
+        <div class="price"></div>
+        <div class="actions">
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px">
+            <input type="checkbox" class="own" /> Possiedo
+          </label>
+          <a class="link ext" target="_blank" rel="noopener">Dettagli</a>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const API_BASE = 'https://api.pokemontcg.io/v2';
+    const els = {
+      sets: document.getElementById('sets'),
+      cards: document.getElementById('cards'),
+      status: document.getElementById('status'),
+      setSearch: document.getElementById('setSearch'),
+      orderBy: document.getElementById('orderBy'),
+      cardSearch: document.getElementById('cardSearch'),
+      priceSource: document.getElementById('priceSource'),
+      selCount: document.getElementById('selCount'),
+      selTotal: document.getElementById('selTotal'),
+      setCount: document.getElementById('setCount'),
+      currentSetTitle: document.getElementById('currentSetTitle'),
+      selectAll: document.getElementById('selectAll'),
+      clearAll: document.getElementById('clearAll'),
+      apiKey: document.getElementById('apiKey'),
+      saveKey: document.getElementById('saveKey'),
+    };
+
+    const state = {
+      sets: [],
+      filteredSets: [],
+      currentSet: null,
+      cards: [],
+      filteredCards: [],
+      own: loadOwn(),
+    };
+
+    // API key predefinita
+    els.apiKey.value = localStorage.getItem('ptcg_api_key') || '383f9ba7-40ba-47c3-8462-8583ac5931df';
+    if(!localStorage.getItem('ptcg_api_key')) {
+      localStorage.setItem('ptcg_api_key','383f9ba7-40ba-47c3-8462-8583ac5931df');
+    }
+
+    els.saveKey.addEventListener('click', ()=>{
+      localStorage.setItem('ptcg_api_key', els.apiKey.value.trim());
+      toast('API Key salvata');
+    });
+
+    function headers(){
+      const h = { 'Accept': 'application/json' };
+      const key = localStorage.getItem('ptcg_api_key');
+      if(key) h['X-Api-Key'] = key;
+      return h;
+    }
+
+    function toast(msg){
+      els.status.textContent = msg;
+      setTimeout(()=>{ els.status.textContent = ''; }, 2000);
+    }
+
+    function loadOwn(){
+      try { return JSON.parse(localStorage.getItem('ptcg_own')||'{}'); } catch { return {}; }
+    }
+    function saveOwn(){
+      localStorage.setItem('ptcg_own', JSON.stringify(state.own));
+    }
+
+    const euro = n => new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(n||0);
+    const debounce=(fn,ms=250)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)} }
+
+    init();
+    async function init(){
+      await loadSets();
+      bindUI();
+    }
+
+    async function loadSets(){
+      els.status.textContent = 'Carico i set…';
+      const url = `${API_BASE}/sets?pageSize=500`;
+      const res = await fetch(url,{headers: headers()});
+      const data = await res.json();
+      state.sets = data.data || [];
+      applySetFilters();
+      els.status.textContent = `${state.sets.length} set`;  
+    }
+
+    function bindUI(){
+      els.setSearch.addEventListener('input', debounce(applySetFilters, 200));
+      els.orderBy.addEventListener('change', applySetFilters);
+      els.cardSearch.addEventListener('input', debounce(applyCardFilters, 200));
+      els.priceSource.addEventListener('change', ()=>{ renderCards(); updateTotals(); });
+      els.selectAll.addEventListener('click', ()=>bulkSelect(true));
+      els.clearAll.addEventListener('click', ()=>bulkSelect(false));
+    }
+
+    function applySetFilters(){
+      const q = els.setSearch.value.trim().toLowerCase();
+      let arr = [...state.sets];
+      switch(els.orderBy.value){
+        case 'releaseDateAsc': arr.sort((a,b)=>new Date(a.releaseDate)-new Date(b.releaseDate)); break;
+        case 'nameAsc': arr.sort((a,b)=>a.name.localeCompare(b.name)); break;
+        case 'nameDesc': arr.sort((a,b)=>b.name.localeCompare(a.name)); break;
+        default: arr.sort((a,b)=>new Date(b.releaseDate)-new Date(a.releaseDate));
+      }
+      if(q) arr = arr.filter(s=> (s.name||'').toLowerCase().includes(q) || (s.series||'').toLowerCase().includes(q));
+      state.filteredSets = arr;
+      renderSets();
+    }
+
+    function renderSets(){
+      els.sets.innerHTML = '';
+      const tpl = document.getElementById('setCardTpl');
+      state.filteredSets.forEach(s=>{
+        const n = tpl.content.firstElementChild.cloneNode(true);
+        n.querySelector('.logo').src = s.images?.symbol || '';
+        n.querySelector('.name').textContent = s.name;
+        n.querySelector('.meta').textContent = `${s.series} • ${s.releaseDate}`;
+        n.querySelector('.count').textContent = `${s.total} carte`;
+        n.addEventListener('click', ()=> selectSet(s));
+        n.addEventListener('keypress', (e)=>{ if(e.key==='Enter') selectSet(s); });
+        els.sets.appendChild(n);
+      });
+    }
+
+    async function selectSet(set){
+      state.currentSet = set;
+      els.currentSetTitle.textContent = `Carte – ${set.name}`;
+      els.cards.innerHTML = '';
+      els.setCount.textContent = set.total || 0;
+      els.status.textContent = `Carico carte di ${set.name}…`;
+
+      const url = `${API_BASE}/cards?q=set.id:${encodeURIComponent(set.id)}&pageSize=250`;
+      let all = [];
+      let page = 1; let hasMore = true;
+      while(hasMore){
+        const res = await fetch(url+`&page=${page}`, {headers: headers()});
+        const data = await res.json();
+        const batch = data.data || [];
+        all = all.concat(batch);
+        hasMore = batch.length === 250;
+        page++;
+      }
+      state.cards = all;
+      applyCardFilters();
+      els.status.textContent = `${all.length} carte caricate`;
+    }
+
+    function applyCardFilters(){
+      const q = els.cardSearch.value.trim().toLowerCase();
+      let arr = [...state.cards];
+      if(q){
+        arr = arr.filter(c=> (c.name||'').toLowerCase().includes(q) || (c.number||'').toLowerCase().includes(q));
+      }
+      state.filteredCards = arr;
+      renderCards();
+      updateTotals();
+    }
+
+    function priceFrom(card){
+      const source = els.priceSource.value;
+      const cm = card.cardmarket?.prices || {};
+      const tp = card.tcgplayer?.prices || {};
+      const pick = (obj, keys) => keys.map(k=>obj?.[k]).find(v=>typeof v==='number');
+
+      if(source.startsWith('cardmarket.')){
+        const key = source.split('.')[1];
+        return pick(cm, [key, 'trendPrice', 'averageSellPrice', 'lowPrice']) ||
+               pick(tp.normal||{}, ['market']) || 0;
+      } else {
+        return pick(tp.normal||{}, ['market','mid']) ||
+               pick(tp.holofoil||{}, ['market','mid']) ||
+               pick(tp.reverseHolofoil||{}, ['market','mid']) ||
+               pick(cm, ['trendPrice','averageSellPrice','lowPrice']) || 0;
+      }
+    }
+
+    function renderCards(){
+      const tpl = document.getElementById('cardTpl');
+      els.cards.innerHTML = '';
+      const setId = state.currentSet?.id;
+
+      state.filteredCards.forEach(card=>{
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.image').src = card.images?.small || '';
+        node.querySelector('.name').textContent = `${card.name}`;
+        node.querySelector('.meta').textContent = `#${card.number} • ${card.rarity||'—'}`;
+
+        const price = priceFrom(card);
+        node.querySelector('.price').innerHTML = price ? `Prezzo stimato: <b>${euro(price)}</b>` : '<span class="meta">Prezzo non disponibile</span>';
+
+        const ext = node.querySelector('.ext');
+        ext.href = card.tcgplayer?.url || card.cardmarket?.url || `https://pokemontcg.io/card/${encodeURIComponent(card.id)}`;
+
+        const ownBox = node.querySelector('.own');
+        const owned = !!state.own?.[setId]?.[card.id];
+        ownBox.checked = owned;
+        ownBox.addEventListener('change', ()=>{
+          toggleOwn(setId, card.id, ownBox.checked, price);
+        });
+
+        els.cards.appendChild(node);
+      });
+    }
+
+    function toggleOwn(setId, cardId, value){
+      state.own[setId] = state.own[setId] || {};
+      if(value) state.own[setId][cardId] = true; else delete state.own[setId][cardId];
+      if(Object.keys(state.own[setId]).length===0) delete state.own[setId];
+      saveOwn();
+      updateTotals();
+    }
+
+    function bulkSelect(val){
+      if(!state.currentSet) return;
+      const setId = state.currentSet.id;
+      state.own[setId] = state.own[setId] || {};
+      state.filteredCards.forEach(c=>{ if(val) state.own[setId][c.id]=true; else delete state.own[setId][c.id]; });
+      if(!val) delete state.own[setId];
+      saveOwn();
+      renderCards();
+      updateTotals();
+    }
+
+    function updateTotals(){
+      if(!state.currentSet) return;
+      const setId = state.currentSet.id;
+      const ownedIds = Object.keys(state.own[setId]||{});
+      els.selCount.textContent = ownedIds.length;
+      let total = 0;
+      state.cards.forEach(c=>{
+        if(ownedIds.includes(c.id)){
+          total += priceFrom(c) || 0;
+        }
+      });
+      els.selTotal.textContent = euro(total);
+    }
+  </script>
+</body>
+</html>
