@@ -398,7 +398,7 @@
     // ---------- Carica set Pokémon ----------
     async function loadSets() {
       els.status.textContent = 'Carico set…';
-      const res = await fetch(`${API_BASE}/sets?pageSize=10`);
+      const res = await fetch(`${API_BASE}/sets?pageSize=300`);
       const data = await res.json();
       state.sets = data.data || [];
       applySetFilters();
