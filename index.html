@@ -398,7 +398,7 @@
     // ---------- Carica set Pokémon ----------
     async function loadSets() {
       els.status.textContent = 'Carico set…';
-      const res = await fetch(`https://cors-anywhere.herokuapp.com/${API_BASE}/sets?pageSize=500`);
+      const res = await fetch(`${API_BASE}/sets?pageSize=500`);
       const data = await res.json();
       state.sets = data.data || [];
       applySetFilters();
@@ -453,7 +453,7 @@
       els.status.textContent = 'Carico carte…';
       let all = []; let page = 1; let hasMore = true;
       while (hasMore) {
-        const res = await fetch(`https://cors-anywhere.herokuapp.com/${API_BASE}/cards?q=set.id:${encodeURIComponent(set.id)}&pageSize=250&page=${page}`);
+        const res = await fetch(`${API_BASE}/cards?q=set.id:${encodeURIComponent(set.id)}&pageSize=250&page=${page}`);
         const data = await res.json();
         const batch = data.data || [];
         all = all.concat(batch);
