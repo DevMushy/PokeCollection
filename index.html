@@ -389,12 +389,12 @@
         els.status.textContent = `Ciao ${state.user.displayName}`;
         els.loginBtn.style.display = 'none';
         els.mainApp.classList.remove('hidden');
-        await loadSets();
-        await loadUserCollection();
+
         bindUI();
       } catch (e) { console.error(e); alert("Login fallito: " + e.message); }
     });
-
+        await loadSets();
+        await loadUserCollection();
     // ---------- Carica set Pokémon ----------
     async function loadSets() {
       els.status.textContent = 'Carico set…';
