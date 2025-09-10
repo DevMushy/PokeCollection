@@ -61,6 +61,20 @@
       outline: none
     }
 
+    #paginationSets {
+      display: flex;
+      justify-content: center;
+      margin-top: 12px;
+    }
+    #paginationSets button {
+      padding: 2px 4px;
+    }
+    #paginationSets button:disabled {
+      opacity: 0.5;
+      background-color: #5dd0ff;
+      cursor: not-allowed;
+    }
+
     input:focus,
     select:focus,
     button:focus {

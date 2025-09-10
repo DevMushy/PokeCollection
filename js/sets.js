@@ -137,7 +137,7 @@ function renderSetsPagination() {
     const b = document.createElement("button");
     b.textContent = label;
     b.disabled = disabled;
-    b.className = "px-2 py-1 border rounded m-1";
+    b.className = "px-0 py-1 border rounded m-1";
     b.addEventListener("click", async () => {
       if (page < 1 || page > state.totalPagesSets) return;
       state.currentPageSets = page;
