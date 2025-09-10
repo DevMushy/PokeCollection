@@ -1,0 +1,251 @@
+ :root {
+      --bg: #0b1220;
+      --panel: #111a2c;
+      --muted: #8aa0c5;
+      --text: #e8efff;
+      --accent: #5dd0ff;
+      --good: #4ade80;
+      --bad: #f87171;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Ubuntu, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 80% -10%, #1a2540 0%, #0b1220 60%);
+      color: var(--text)
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: linear-gradient(0deg, rgba(11, 18, 32, 0.8), rgba(11, 18, 32, 0.95));
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #1c2a48
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(20px, 2.6vw, 28px);
+      letter-spacing: .2px
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px
+    }
+
+    input,
+    select,
+    button {
+      background: #0f1627;
+      border: 1px solid #253455;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      outline: none
+    }
+
+    input:focus,
+    select:focus,
+    button:focus {
+      border-color: var(--accent)
+    }
+
+    button {
+      cursor: pointer
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px
+    }
+
+    .set-card,
+    .card {
+      background: var(--panel);
+      border: 1px solid #1c2a48;
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .25)
+    }
+
+    .set-card:hover {
+      border-color: var(--accent)
+    }
+
+    .set-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px
+    }
+
+    .set-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600
+    }
+
+    .tag {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 3px 8px;
+      border: 1px solid #2a3c62;
+      border-radius: 999px
+    }
+
+    .pill {
+      font-size: 11px;
+      background: #101a2a;
+      color: #b7c6e6;
+      border: 1px solid #2a3c62;
+      padding: 4px 8px;
+      border-radius: 999px
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px
+    }
+
+    @media (max-width: 900px) {
+      .columns {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid #1c2a48;
+      border-radius: 16px;
+      padding: 14px
+    }
+
+    .panel h2 {
+      margin: 4px 0 10px 0;
+      font-size: 18px
+    }
+
+    .search {
+      width: 260px
+    }
+
+    .status {
+      font-size: 14px;
+      color: var(--muted)
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px
+    }
+
+    .card {
+      display: flex;
+      gap: 10px
+    }
+
+    .card img {
+      width: 84px;
+      height: 116px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #22345a
+    }
+
+    .card .info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .card .name {
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .card .meta {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .card .price {
+      margin-top: 6px;
+      font-size: 14px
+    }
+
+    .card .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px
+    }
+
+    .totals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px
+    }
+
+    .total-pill {
+      background: #0f1a2b;
+      border: 1px solid #27406d;
+      border-radius: 12px;
+      padding: 10px 12px
+    }
+
+    .link {
+      color: var(--accent)
+    }
+
+    .hidden {
+      display: none
+    }
+
+    #loginBtn {
+      background: var(--accent);
+      color: #000;
+      font-weight: 600
+    }
