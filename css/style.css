@@ -70,8 +70,7 @@
       padding: 4px 6px;
     }
     #paginationSets button:disabled {
-      opacity: 0.5;
-      background-color: #5dd0ff;
+      background-color: #828e93;
       color: white;
       cursor: not-allowed;
     }
