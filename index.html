@@ -23,15 +23,17 @@
     <div class="columns">
       <section class="panel">
         <h2>Set</h2>
-        <input id="setSearch" class="search" placeholder="Cerca set…" />
-        <select id="orderBy">
-          <option value="releaseDateDesc">Più recenti</option>
-          <option value="releaseDateAsc">Più vecchi</option>
-          <option value="nameAsc">Nome A→Z</option>
-          <option value="nameDesc">Nome Z→A</option>
-        </select>
-<div id="sets"></div>
-<div id="paginationSets" class="flex justify-center mt-4"></div>
+        <div class="search-container">
+          <input id="setSearch" class="search" placeholder="Cerca set…" />
+          <select id="orderBy">
+            <option value="releaseDateDesc">Più recenti</option>
+            <option value="releaseDateAsc">Più vecchi</option>
+            <option value="nameAsc">Nome A→Z</option>
+            <option value="nameDesc">Nome Z→A</option>
+          </select>
+        </div>
+        <div id="sets"></div>
+        <div id="paginationSets" class="flex justify-center mt-4"></div>
 
 
       </section>
@@ -45,8 +47,8 @@
         </div>
         <div class="chips totals">
           <div class="total-pill">Selezionate: <b id="selCount">0</b></div>
-          <div class="total-pill">Valore stimato: <b id="selTotal">€ 0.00</b></div>
-          <div class="total-pill">Carte nel set: <b id="setCount">0</b></div>
+          <div class="total-pill">Valore: <b id="selTotal">€ 0.00</b></div>
+          <div class="total-pill">N. Carte set: <b id="setCount">0</b></div>
         </div>
         <div id="cards" class="cards"></div>
 
